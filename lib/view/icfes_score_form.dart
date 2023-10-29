@@ -70,6 +70,8 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                     Image.asset(
                       'assets/umariana.png',
                       height: 50,
+                      filterQuality: FilterQuality.high,
+                      isAntiAlias: true,
                     ),
                     const Column(
                       children: [
@@ -93,6 +95,8 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                     Image.asset(
                       'assets/icfes.png',
                       height: 50,
+                      filterQuality: FilterQuality.high,
+                      isAntiAlias: true,
                     ),
                   ],
                 ),
@@ -497,36 +501,15 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                     bool allTextAreFilled;
                     allTextAreFilled = _idController.text.isNotEmpty &&
                         _registryController.text.isNotEmpty;
+
                     if (!allTextAreFilled) {
                       showFailureDialog(
                         'Debes llenar todos los campos para continuar',
                         DialogType.warning,
                       );
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     return AlertDialog(
-                      //       title: const Text("Espera"),
-                      //       content: const Text(
-                      //           "Debes llenar todos los campos para continuar"),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop();
-                      //           },
-                      //           style: const ButtonStyle(
-                      //               foregroundColor: MaterialStatePropertyAll(
-                      //             Colors.teal,
-                      //           )),
-                      //           child: const Text("Entendido"),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      // );
                       return;
                     }
-                    // registro
+
                     int? studentId = int.tryParse(_idController.text);
 
                     if (studentId == null) {
@@ -534,28 +517,6 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                         'Formato de $selectedIdType no válido',
                         DialogType.warning,
                       );
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     return AlertDialog(
-                      //       title: const Text("Espera"),
-                      //       content: const Text(
-                      //           "Debes llenar todos los campos para continuar"),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop();
-                      //           },
-                      //           style: const ButtonStyle(
-                      //               foregroundColor: MaterialStatePropertyAll(
-                      //             Colors.teal,
-                      //           )),
-                      //           child: const Text("Entendido"),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      // );
                       return;
                     }
 
@@ -567,39 +528,12 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                       naturalesScore: _naturalesScore.round(),
                       inglesScore: _inglesScore.round(),
                     );
+
                     try {
-                      await university.registerIcfesScore(
-                        studentId,
-                        score,
-                      );
+                      await university.registerIcfesScore(studentId, score);
                       showSuccessDialog();
                     } catch (e) {
-                      // ignore: use_build_context_synchronously
                       showFailureDialog(e.toString(), DialogType.error);
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     return AlertDialog(
-                      //       title: const Text("Error"),
-                      //       content: Text(
-                      //         e.toString(),
-                      //       ),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop();
-                      //           },
-                      //           style: const ButtonStyle(
-                      //               foregroundColor: MaterialStatePropertyAll(
-                      //             Colors.teal,
-                      //           )),
-                      //           child: const Text("Entendido"),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      // );
-                      return;
                     }
                   },
                 ),
@@ -620,11 +554,12 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
       showCloseIcon: false,
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
+      barrierColor: Colors.black.withOpacity(.8),
       title: '¡Siuu!',
       desc: 'El registro icfes ha sido registrado exitosamente',
       btnOkOnPress: () {},
       btnOkIcon: Icons.check_circle,
-      btnOkText: 'Si',
+      btnOkText: 'Ok',
       buttonsTextStyle: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
@@ -633,9 +568,15 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
       titleTextStyle: const TextStyle(
         fontSize: 25,
         fontWeight: FontWeight.bold,
+        color: Colors.white,
       ),
-      descTextStyle: const TextStyle(fontSize: 20),
+      descTextStyle: const TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+      ),
       width: 500,
+      dialogBackgroundColor: const Color(0xff1B242B),
+      btnOkColor: Colors.teal,
     ).show();
   }
 
@@ -644,11 +585,12 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
       context: context,
       animType: AnimType.scale,
       headerAnimationLoop: false,
+      barrierColor: Colors.black.withOpacity(.8),
       dialogType: type,
       showCloseIcon: false,
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
-      title: '¡Ha ocurrido un error!',
+      title: type == DialogType.error ? 'Ha ocurrido un error...' : 'Espera...',
       desc: message,
       btnOkOnPress: () {},
       btnOkIcon: Icons.check_circle,
@@ -661,9 +603,15 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
       titleTextStyle: const TextStyle(
         fontSize: 25,
         fontWeight: FontWeight.bold,
+        color: Colors.white,
       ),
-      descTextStyle: const TextStyle(fontSize: 20),
+      descTextStyle: const TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+      ),
       width: 500,
+      dialogBackgroundColor: const Color(0xff1B242B),
+      btnOkColor: Colors.teal,
     ).show();
   }
 }

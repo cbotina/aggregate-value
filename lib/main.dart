@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Roboto',
       ),
+      debugShowCheckedModeBanner: false,
       home: const IcfesScoreForm(),
     );
   }

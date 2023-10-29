@@ -7,18 +7,21 @@ class IcfesScoreDAO {
   Future insertIcfesScore(int studentId, IcfesScore icfesScore) async {
     var conn = dbFacade.connect();
 
-    return conn.insert(table: 'icfesscore', insertData: {
-      'id': icfesScore.id,
-      'student_id': studentId,
-      'lecturascore': icfesScore.lecuraCriticaScore,
-      'matematicasscore': icfesScore.matematicasScore,
-      'inglesscore': icfesScore.inglesScore,
-      'naturalesscore': icfesScore.naturalesScore,
-      'sociudadanasscore': icfesScore.sociudadanasScore,
-    }).catchError((error) {
+    return conn.insert(
+      table: 'icfesscore',
+      insertData: {
+        'id': icfesScore.id,
+        'student_id': studentId,
+        'lecturascore': icfesScore.lecuraCriticaScore,
+        'matematicasscore': icfesScore.matematicasScore,
+        'inglesscore': icfesScore.inglesScore,
+        'naturalesscore': icfesScore.naturalesScore,
+        'sociudadanasscore': icfesScore.sociudadanasScore,
+      },
+    ).catchError((error) {
       if (error.contains('[1062]')) {
         throw Exception(
-          'Error: El registro ingresado ya se encuentra en la base de datos',
+          'El registro ingresado ya se encuentra en la base de datos',
         );
       } else if (error.contains('[1452]')) {
         throw Exception(
