@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:registro_agregado_cb/model/icfes_score.dart';
@@ -497,56 +498,64 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                     allTextAreFilled = _idController.text.isNotEmpty &&
                         _registryController.text.isNotEmpty;
                     if (!allTextAreFilled) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Espera"),
-                            content: const Text(
-                                "Debes llenar todos los campos para continuar"),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: const ButtonStyle(
-                                    foregroundColor: MaterialStatePropertyAll(
-                                  Colors.teal,
-                                )),
-                                child: const Text("Entendido"),
-                              ),
-                            ],
-                          );
-                        },
+                      showFailureDialog(
+                        'Debes llenar todos los campos para continuar',
+                        DialogType.warning,
                       );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return AlertDialog(
+                      //       title: const Text("Espera"),
+                      //       content: const Text(
+                      //           "Debes llenar todos los campos para continuar"),
+                      //       actions: [
+                      //         TextButton(
+                      //           onPressed: () {
+                      //             Navigator.of(context).pop();
+                      //           },
+                      //           style: const ButtonStyle(
+                      //               foregroundColor: MaterialStatePropertyAll(
+                      //             Colors.teal,
+                      //           )),
+                      //           child: const Text("Entendido"),
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      // );
                       return;
                     }
                     // registro
                     int? studentId = int.tryParse(_idController.text);
 
                     if (studentId == null) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Espera"),
-                            content: const Text(
-                                "Debes llenar todos los campos para continuar"),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: const ButtonStyle(
-                                    foregroundColor: MaterialStatePropertyAll(
-                                  Colors.teal,
-                                )),
-                                child: const Text("Entendido"),
-                              ),
-                            ],
-                          );
-                        },
+                      showFailureDialog(
+                        'Formato de $selectedIdType no válido',
+                        DialogType.warning,
                       );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return AlertDialog(
+                      //       title: const Text("Espera"),
+                      //       content: const Text(
+                      //           "Debes llenar todos los campos para continuar"),
+                      //       actions: [
+                      //         TextButton(
+                      //           onPressed: () {
+                      //             Navigator.of(context).pop();
+                      //           },
+                      //           style: const ButtonStyle(
+                      //               foregroundColor: MaterialStatePropertyAll(
+                      //             Colors.teal,
+                      //           )),
+                      //           child: const Text("Entendido"),
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      // );
                       return;
                     }
 
@@ -563,31 +572,33 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                         studentId,
                         score,
                       );
+                      showSuccessDialog();
                     } catch (e) {
                       // ignore: use_build_context_synchronously
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Error"),
-                            content: Text(
-                              e.toString(),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: const ButtonStyle(
-                                    foregroundColor: MaterialStatePropertyAll(
-                                  Colors.teal,
-                                )),
-                                child: const Text("Entendido"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      showFailureDialog(e.toString(), DialogType.error);
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return AlertDialog(
+                      //       title: const Text("Error"),
+                      //       content: Text(
+                      //         e.toString(),
+                      //       ),
+                      //       actions: [
+                      //         TextButton(
+                      //           onPressed: () {
+                      //             Navigator.of(context).pop();
+                      //           },
+                      //           style: const ButtonStyle(
+                      //               foregroundColor: MaterialStatePropertyAll(
+                      //             Colors.teal,
+                      //           )),
+                      //           child: const Text("Entendido"),
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      // );
                       return;
                     }
                   },
@@ -598,6 +609,62 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
         ],
       ),
     );
+  }
+
+  showSuccessDialog() {
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.scale,
+      headerAnimationLoop: false,
+      dialogType: DialogType.success,
+      showCloseIcon: false,
+      dismissOnBackKeyPress: false,
+      dismissOnTouchOutside: false,
+      title: '¡Siuu!',
+      desc: 'El registro icfes ha sido registrado exitosamente',
+      btnOkOnPress: () {},
+      btnOkIcon: Icons.check_circle,
+      btnOkText: 'Si',
+      buttonsTextStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      titleTextStyle: const TextStyle(
+        fontSize: 25,
+        fontWeight: FontWeight.bold,
+      ),
+      descTextStyle: const TextStyle(fontSize: 20),
+      width: 500,
+    ).show();
+  }
+
+  showFailureDialog(String message, DialogType type) {
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.scale,
+      headerAnimationLoop: false,
+      dialogType: type,
+      showCloseIcon: false,
+      dismissOnBackKeyPress: false,
+      dismissOnTouchOutside: false,
+      title: '¡Ha ocurrido un error!',
+      desc: message,
+      btnOkOnPress: () {},
+      btnOkIcon: Icons.check_circle,
+      btnOkText: 'Entendido',
+      buttonsTextStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      titleTextStyle: const TextStyle(
+        fontSize: 25,
+        fontWeight: FontWeight.bold,
+      ),
+      descTextStyle: const TextStyle(fontSize: 20),
+      width: 500,
+    ).show();
   }
 }
 
