@@ -21,7 +21,7 @@ class IcfesScoreDAO {
     ).catchError((error) {
       if (error.contains('[1062]')) {
         throw Exception(
-          'El registro ingresado ya se encuentra en la base de datos',
+          'El registro ICFES ingresado ya se encuentra en la base de datos',
         );
       } else if (error.contains('[1452]')) {
         throw Exception(
@@ -35,8 +35,29 @@ class IcfesScoreDAO {
     });
   }
 
-  IcfesScore getIcfesScore(int icfesScoreId) {
-    throw UnimplementedError();
+  Future<IcfesScore?> getStudentIcfesScore(int studentId) async {
+    var conn = dbFacade.connect();
+
+    Map row = await conn
+        .getOne(table: 'icfesscore', where: {'student_id': studentId});
+
+    if (row.isNotEmpty) {
+      IcfesScore score = IcfesScore(
+        id: row['id'],
+        lecuraCriticaScore: row['lecturascore'],
+        matematicasScore: row['matematicasscore'],
+        sociudadanasScore: row['sociudadanasscore'],
+        naturalesScore: row['naturalesscore'],
+        inglesScore: row['inglesscore'],
+      );
+
+      conn.close();
+
+      return score;
+    } else {
+      conn.close();
+      return null;
+    }
   }
 
   void updateIcfesScore(IcfesScore icfesScore) {

@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:registro_agregado_cb/model/icfes_score.dart';
+import 'package:registro_agregado_cb/model/student.dart';
 import 'package:registro_agregado_cb/model/university.dart';
 
 // ignore: must_be_immutable
@@ -33,7 +34,7 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
 
   @override
   void initState() {
-    university = University(faculties: [], id: 1, name: 'Umariana');
+    university = University(name: 'Umariana');
     _idController = TextEditingController();
     _registryController = TextEditingController();
     super.initState();
@@ -530,8 +531,26 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
                     );
 
                     try {
-                      await university.registerIcfesScore(studentId, score);
-                      showSuccessDialog();
+                      Student? student =
+                          await university.findStudentById(studentId);
+
+                      if (student == null) {
+                        throw Exception(
+                          "El estudiante con id: $studentId no se encuentra en la base de datos",
+                        );
+                      }
+
+                      if (await student.getIcfesScore() != null) {
+                        throw Exception(
+                          "El estudiante con id: $studentId ya tiene registro ICFES en la base de datos",
+                        );
+                      }
+
+                      await student.registerIcfesScore(score);
+
+                      showSuccessDialog(
+                        'El registro icfes con id: ${score.id} ha sido registrado exitosamente',
+                      );
                     } catch (e) {
                       showFailureDialog(e.toString(), DialogType.error);
                     }
@@ -545,7 +564,7 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
     );
   }
 
-  showSuccessDialog() {
+  showSuccessDialog(String message) {
     AwesomeDialog(
       context: context,
       animType: AnimType.scale,
@@ -556,7 +575,7 @@ class _IcfesScoreFormState extends State<IcfesScoreForm> {
       dismissOnTouchOutside: false,
       barrierColor: Colors.black.withOpacity(.8),
       title: '¡Siuu!',
-      desc: 'El registro icfes ha sido registrado exitosamente',
+      desc: message,
       btnOkOnPress: () {},
       btnOkIcon: Icons.check_circle,
       btnOkText: 'Ok',

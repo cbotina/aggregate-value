@@ -1,27 +1,22 @@
+import 'package:registro_agregado_cb/dao/student_dao.dart';
 import 'package:registro_agregado_cb/model/student.dart';
 
 class Career {
   final int id;
   final String name;
-  List<Student> students;
+  final StudentDAO studentDAO = StudentDAO();
 
   Career({
     required this.id,
-    required this.students,
     required this.name,
   });
 
-  Student? findStudentById(int it) {
-    for (Student student in students) {
-      if (student.id == id) return student;
-    }
-    return null;
+  Future<List<Student>> getStudents() async {
+    return studentDAO.getCareerStudents(id);
   }
-
-  void updateIcfesScore() {}
 
   @override
   String toString() {
-    return 'Carrera{id: $id, Nombre: $name, Estudiantes: $students}';
+    return 'Carrera{id: $id, Nombre: $name';
   }
 }

@@ -1,29 +1,36 @@
-import 'package:registro_agregado_cb/dao/icfes_score_dao.dart';
+import 'package:registro_agregado_cb/dao/faculty_dao.dart';
+import 'package:registro_agregado_cb/model/career.dart';
 import 'package:registro_agregado_cb/model/faculty.dart';
-import 'package:registro_agregado_cb/model/icfes_score.dart';
+import 'package:registro_agregado_cb/model/student.dart';
 
 class University {
-  final int id;
   final String name;
-  List<Faculty> faculties;
-
-  IcfesScoreDAO icfesScoreDAO = IcfesScoreDAO();
+  final FacultyDAO facultyDAO = FacultyDAO();
 
   University({
-    required this.id,
     required this.name,
-    required this.faculties,
   });
 
-  Future registerIcfesScore(
-    int studentId,
-    IcfesScore icfesScore,
-  ) async {
-    await icfesScoreDAO.insertIcfesScore(studentId, icfesScore);
+  Future<Student?> findStudentById(int studentId) async {
+    Student? foundStudent;
+    for (Faculty faculty in await getFaculties()) {
+      for (Career career in await faculty.getCareers()) {
+        for (Student student in await career.getStudents()) {
+          if (student.id == studentId) {
+            foundStudent = student;
+          }
+        }
+      }
+    }
+    return foundStudent;
+  }
+
+  Future<List<Faculty>> getFaculties() async {
+    return facultyDAO.getFaculties();
   }
 
   @override
   String toString() {
-    return 'Universidad{id: $id, Nombre: $name, Facultades: $faculties}';
+    return 'Universidad{Nombre: $name}';
   }
 }
