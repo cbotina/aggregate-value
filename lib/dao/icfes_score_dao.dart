@@ -38,11 +38,13 @@ class IcfesScoreDAO {
   Future<IcfesScore?> getStudentIcfesScore(int studentId) async {
     var conn = dbFacade.connect();
 
+    IcfesScore? score;
+
     Map row = await conn
         .getOne(table: 'icfesscore', where: {'student_id': studentId});
 
     if (row.isNotEmpty) {
-      IcfesScore score = IcfesScore(
+      score = IcfesScore(
         id: row['id'],
         lecuraCriticaScore: row['lecturascore'],
         matematicasScore: row['matematicasscore'],
@@ -50,14 +52,11 @@ class IcfesScoreDAO {
         naturalesScore: row['naturalesscore'],
         inglesScore: row['inglesscore'],
       );
-
-      conn.close();
-
-      return score;
-    } else {
-      conn.close();
-      return null;
     }
+
+    conn.close();
+
+    return score;
   }
 
   void updateIcfesScore(IcfesScore icfesScore) {
