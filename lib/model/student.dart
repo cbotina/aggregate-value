@@ -5,7 +5,6 @@ class Student {
   final int id;
   final String name;
   final IcfesScoreDAO icfesScoreDAO = IcfesScoreDAO();
-  IcfesScore? icfesScore;
 
   Student({required this.id, required this.name});
 
@@ -28,6 +27,6 @@ class Student {
 
   @override
   String toString() {
-    return 'Estudiante{id: $id, Nombre: $name, Puntaje Icfes: $icfesScore}';
+    return 'Estudiante{id: $id, Nombre: $name';
   }
 }
