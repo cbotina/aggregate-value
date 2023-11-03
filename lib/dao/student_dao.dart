@@ -19,4 +19,34 @@ class StudentDAO {
 
     return students;
   }
+
+  Future insertStudent(int careerId, Student student) async {
+    var conn = dbFacade.connect();
+
+    return conn.insert(
+      table: 'student',
+      insertData: {
+        'id': student.id,
+        'career_id': careerId,
+        'name': student.name
+      },
+    ).catchError((error) {
+      throw Exception(error);
+    }).whenComplete(() {
+      conn.close();
+    });
+  }
+
+  Future deleteStudent(int studentId) async {
+    var conn = dbFacade.connect();
+
+    return conn.delete(
+      table: 'student',
+      where: {'id': studentId},
+    ).catchError((error) {
+      throw Exception(error);
+    }).whenComplete(() {
+      conn.close();
+    });
+  }
 }

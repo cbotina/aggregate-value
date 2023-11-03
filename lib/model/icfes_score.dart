@@ -16,6 +16,15 @@ class IcfesScore {
   });
 
   @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is IcfesScore && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
   String toString() {
     return 'Puntaje: {$id, '
         'Lectura Crítica: $lecuraCriticaScore, '

@@ -1,3 +1,4 @@
+import 'package:registro_agregado_cb/errors/icfes_score_exceptions.dart';
 import 'package:registro_agregado_cb/facade/db_facade.dart';
 import 'package:registro_agregado_cb/model/icfes_score.dart';
 
@@ -20,16 +21,14 @@ class IcfesScoreDAO {
       },
     ).catchError((error) {
       if (error.contains('[1062]')) {
-        throw Exception(
-          'El registro ICFES ingresado ya se encuentra en la base de datos',
-        );
+        throw IcfesScoreAlreadyExists();
       } else if (error.contains('[1452]')) {
         throw Exception(
           'El estudiante ingresado no existe en la base de datos',
         );
       }
 
-      return 0;
+      throw Exception();
     }).whenComplete(() {
       conn.close();
     });
@@ -59,11 +58,41 @@ class IcfesScoreDAO {
     return score;
   }
 
+  Future<List<IcfesScore>> getAllIcfesScores() async {
+    var conn = dbFacade.connect();
+
+    List<dynamic> queryResults = await conn.getAll(table: 'icfesscore');
+
+    List<IcfesScore> scores = queryResults.map(
+      (e) {
+        return IcfesScore(
+          id: e['id'],
+          lecuraCriticaScore: e['lecturascore'],
+          inglesScore: e['inglesscore'],
+          matematicasScore: e['matematicasscore'],
+          naturalesScore: e['naturalesscore'],
+          sociudadanasScore: e['sociudadanasscore'],
+        );
+      },
+    ).toList();
+
+    return scores;
+  }
+
   void updateIcfesScore(IcfesScore icfesScore) {
     throw UnimplementedError();
   }
 
-  void deleteIcfesScore(int icfesScoreId) {
-    throw UnimplementedError();
+  Future deleteIcfesScore(String icfesScoreId) {
+    var conn = dbFacade.connect();
+
+    return conn.delete(
+      table: 'icfesscore',
+      where: {'id': icfesScoreId},
+    ).catchError((error) {
+      throw Exception(error);
+    }).whenComplete(() {
+      conn.close();
+    });
   }
 }
