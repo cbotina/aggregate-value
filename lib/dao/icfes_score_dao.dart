@@ -1,4 +1,5 @@
 import 'package:registro_agregado_cb/errors/icfes_score_exceptions.dart';
+import 'package:registro_agregado_cb/errors/student_exceptions.dart';
 import 'package:registro_agregado_cb/facade/db_facade.dart';
 import 'package:registro_agregado_cb/model/icfes_score.dart';
 
@@ -21,11 +22,9 @@ class IcfesScoreDAO {
       },
     ).catchError((error) {
       if (error.contains('[1062]')) {
-        throw IcfesScoreAlreadyExists();
+        throw IcfesScoreAlreadyExistsException();
       } else if (error.contains('[1452]')) {
-        throw Exception(
-          'El estudiante ingresado no existe en la base de datos',
-        );
+        throw NotRegisteredStudentException();
       }
 
       throw Exception();

@@ -1,4 +1,5 @@
-class IcfesScoreAlreadyExists implements Exception {
+class IcfesScoreAlreadyExistsException implements Exception {
   @override
-  String toString() => 'Exceptionnooo';
+  String toString() =>
+      'El puntaje Icfes ingresado ya se encuentra en la base de datos';
 }
